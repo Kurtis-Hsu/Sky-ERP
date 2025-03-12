@@ -1,0 +1,48 @@
+server:
+  port: 10000
+
+spring:
+  jackson:
+    visibility:
+      all: public_only
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: off
+
+  application:
+    name: @project-name@
+    version: @project-version@
+  profiles:
+    active: @running-environment@
+  mvc:
+    servlet:
+      load-on-startup: 1
+    problemdetails:
+      enabled: on
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  threads:
+    virtual:
+      enabled: on
+  aop:
+    auto: on
+    proxy-target-class: on
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  file:
+    path: log
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:}){magenta} - %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID} - [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+jasypt:
+  encryptor:
+    gcm-secret-key-password: ${SKY_SECURITY_KEY}
+    algorithm: PBEWithMD5AndDES
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    string-output-type: base64

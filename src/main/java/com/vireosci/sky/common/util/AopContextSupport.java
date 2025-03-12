@@ -1,0 +1,13 @@
+package com.vireosci.sky.common.util;
+
+import org.springframework.aop.framework.AopContext;
+
+public interface AopContextSupport<T>
+{
+    /// 获取当前对象的 AOP 代理类
+    @SuppressWarnings("unchecked")
+    default T currentProxy()
+    {
+        return (T) AopContext.currentProxy();
+    }
+}

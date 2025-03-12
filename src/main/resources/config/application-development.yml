@@ -1,0 +1,20 @@
+server:
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://192.168.2.35:5432/sky_erp_dev?charset=UTF-8&timezone=Asia/Shanghai
+    username: ENC(y1Ph8Qr5IyiUMBRz9zoZO4+4HOwJJ3fWzSFBGc0vviq789EF)
+    password: ENC(ZQNbv025t16roBGo1PAyFc950e1B7ZtqMQaVC07iff2Xj3Zi)
+  data:
+    redis:
+      host: 192.168.2.35
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: on
+
+logging:
+  level:
+    com.vireosci.sky.service.SysUserService: debug
