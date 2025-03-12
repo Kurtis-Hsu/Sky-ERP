@@ -55,20 +55,18 @@ public class SecurityConfiguration
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .exceptionHandling(conf -> {
-                    conf
-                            .authenticationEntryPoint(
-                                    (req, rsp, e) ->
-                                            handle(rsp, e, HttpStatus.UNAUTHORIZED, "认证失败", e.getMessage())
-                            )
-                            .accessDeniedHandler(
-                                    (req, rsp, e) ->
-                                            handle(
-                                                    rsp, e, HttpStatus.FORBIDDEN, "拒绝访问",
-                                                    "抱歉，您没有足够的访问权限"
-                                            )
-                            );
-                })
+                .exceptionHandling(conf -> conf
+                        .authenticationEntryPoint(
+                                (req, rsp, e) ->
+                                        handle(rsp, e, HttpStatus.UNAUTHORIZED, "认证失败", e.getMessage())
+                        )
+                        .accessDeniedHandler(
+                                (req, rsp, e) ->
+                                        handle(
+                                                rsp, e, HttpStatus.FORBIDDEN, "拒绝访问",
+                                                "抱歉，您没有足够的访问权限"
+                                        )
+                        ))
                 .build();
     }
 
