@@ -8,7 +8,6 @@ spring:
     default-property-inclusion: non_null
     deserialization:
       fail-on-unknown-properties: off
-
   application:
     name: @project-name@
     version: @project-version@

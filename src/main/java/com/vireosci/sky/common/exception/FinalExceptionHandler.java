@@ -40,10 +40,7 @@ public class FinalExceptionHandler
                     {
                         // noinspection InfiniteLoopStatement
                         while (true)
-                            log.error(
-                                    "\u001B[31m-- unhandled exception: \u001B[0m\n{}",
-                                    unhandledQueue.takeFirst().toString()
-                            );
+                            log.error("-- unhandled exception:", unhandledQueue.takeFirst());
                     }
                     catch (InterruptedException ignored) { log.error("异常打印线程中断"); }
                 });

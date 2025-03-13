@@ -39,7 +39,7 @@ public class SecurityConfiguration
                 .build();
     }
 
-    private static final String[] allowList = {};
+    private static final String[] allowList = {"/**"};
 
     /// 配置 Spring Security 过滤器链
     @Bean

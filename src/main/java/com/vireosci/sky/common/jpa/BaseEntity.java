@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 /// 实体基类
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity implements LogicDeletable, Serializable
+public abstract class BaseEntity implements Serializable
 {
     /// 备注
     @Comment("备注")

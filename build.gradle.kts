@@ -15,7 +15,8 @@ java {
         resources.include(
             "META-INF/**",
             "config/application.yml", "config/application-$runningEnvironment.yml",
-            "banner.txt"
+            "banner.txt",
+            "public/index.html"
         )
     }
 }

@@ -8,11 +8,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /// 用户
 @Entity
 @Table(
+        name = "sys_user",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_phone", columnNames = { "phone", "deleted_time" }),
                 @UniqueConstraint(name = "uk_email", columnNames = { "email", "deleted_time" }),
@@ -20,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
         }
 )
+@SQLRestriction("deleted_time IS NULL")
+@SQLDelete(sql = "UPDATE sys_user SET deleted_time = now() WHERE id = ?;")
 public class SysUser extends BaseEntity
 {
     /// 数据ID
@@ -43,7 +48,7 @@ public class SysUser extends BaseEntity
 
     /// 密码（使用加密后的密文）
     @Comment("密码（使用加密后的密文）")
-    @Column(nullable = false, length = 126)
+    @Column(nullable = false, columnDefinition = "TEXT  ")
     private String password;
 
     /// 昵称

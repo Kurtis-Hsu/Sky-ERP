@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/// IP 工具类
+/// IP 相关工具
 public final class IpUtils
 {
     /// 获取本地 IP，获取不到时默认返回 127.0.0.1

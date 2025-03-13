@@ -1,7 +1,3 @@
-server:
-  servlet:
-    context-path: /api
-
 spring:
   datasource:
     url: jdbc:postgresql://192.168.2.35:5432/sky_erp_dev?charset=UTF-8&timezone=Asia/Shanghai
@@ -14,7 +10,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: on
+    properties:
+      hibernate:
+        format_sql: on
 
 logging:
   level:
-    com.vireosci.sky.service.SysUserService: debug
+    com.vireosci.sky:
+      service: debug

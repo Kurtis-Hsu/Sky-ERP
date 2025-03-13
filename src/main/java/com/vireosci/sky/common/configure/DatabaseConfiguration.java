@@ -1,8 +1,5 @@
 package com.vireosci.sky.common.configure;
 
-import jakarta.annotation.Nonnull;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /// 数据库相关配置
@@ -36,22 +32,7 @@ public class DatabaseConfiguration
         return redisTemplate;
     }
 
-    /// 使用数据库的 `now()` 函数获取当前时间
+    /// 使用 [LocalDateTime#now()] 提供当前时间
     @Bean
-    public DateTimeProvider auditingDateTimeProvider()
-    {
-        return new DateTimeProvider()
-        {
-            @PersistenceContext
-            private EntityManager entityManager;
-
-            @Override
-            @Nonnull
-            public Optional<TemporalAccessor> getNow()
-            {
-                var now = (Instant) entityManager.createNativeQuery("SELECT now()").getSingleResult();
-                return Optional.of(now);
-            }
-        };
-    }
+    public DateTimeProvider auditingDateTimeProvider() { return () -> Optional.of(LocalDateTime.now()); }
 }

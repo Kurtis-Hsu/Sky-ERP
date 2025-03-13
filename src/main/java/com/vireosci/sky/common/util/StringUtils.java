@@ -2,6 +2,7 @@ package com.vireosci.sky.common.util;
 
 import jakarta.annotation.Nullable;
 
+/// 字符串相关工具
 public final class StringUtils
 {
     /// 若字符串为 `null`，或长度等于 0，或所有字符都为 `whitespace` 字符，返回 `true`，否则返回 `false`

@@ -4,7 +4,7 @@ import jakarta.annotation.Nullable;
 
 import java.util.function.Supplier;
 
-/// 通用工具类
+/// 通用工具
 public final class Utils
 {
     /// 提供一个原参数和一个默认参数，原参数不为 `null` 时返回原参数，否则返回默认参数
