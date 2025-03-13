@@ -10,22 +10,25 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.security.Principal;
 
 /// 用户
 @Entity
 @Table(
         name = "sys_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_phone", columnNames = { "phone", "deleted_time" }),
-                @UniqueConstraint(name = "uk_email", columnNames = { "email", "deleted_time" }),
-                @UniqueConstraint(name = "uk_wechat", columnNames = { "wechat_union_id", "deleted_time" })
+                @UniqueConstraint(name = "uk_phone", columnNames = { "phone", "deleted_at" }),
+                @UniqueConstraint(name = "uk_email", columnNames = { "email", "deleted_at" }),
+                @UniqueConstraint(name = "uk_wechat", columnNames = { "wechat_union_id", "deleted_at" })
 
         }
 )
-@SQLRestriction("deleted_time IS NULL")
-@SQLDelete(sql = "UPDATE sys_user SET deleted_time = now() WHERE id = ?;")
-public class SysUser extends BaseEntity
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE sys_user SET deleted_at = now() WHERE id = ?;")
+public class SysUser extends BaseEntity implements Principal, CredentialsContainer
 {
     /// 数据ID
     @Comment("数据ID")
@@ -84,6 +87,12 @@ public class SysUser extends BaseEntity
     @Comment("微信 UnionId")
     @Column(columnDefinition = "CHAR(28)")
     private String wechatUnionId;
+
+    /// 返回用户的昵称 [#nickname]
+    @Override public String getName() { return nickname; }
+
+    /// 擦除敏感信息
+    @Override public void eraseCredentials() { password = null; }
 
     @AssertTrue(message = "手机号和邮箱至少存储一个")
     public boolean hasValidPrincipal() { return StringUtils.notBlank(phone) || StringUtils.notBlank(email); }

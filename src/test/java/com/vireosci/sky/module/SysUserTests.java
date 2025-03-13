@@ -33,6 +33,6 @@ public class SysUserTests
 
         sysUserRepository.deleteById(updatedUser.getId());
 
-        sysUserRepository.findAll().forEach(user -> { assert user.getDeletedTime() == null; });
+        sysUserRepository.findAll().forEach(user -> { assert user.getDeletedAt() == null; });
     }
 }

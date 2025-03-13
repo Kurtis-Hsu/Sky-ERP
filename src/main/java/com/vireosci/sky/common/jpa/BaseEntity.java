@@ -6,7 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -24,39 +26,58 @@ public abstract class BaseEntity implements Serializable
     @Column(columnDefinition = "TEXT")
     private String remark;
 
+    /// 数据创建人
+    @Comment("数据创建人")
+    @CreatedBy
+    @Column(nullable = false, updatable = false)
+    private String createdBy;
+
     /// 数据创建时间
     @Comment("数据创建时间")
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
+
+    /// 数据上次修改人
+    @Comment("数据上次修改人")
+    @LastModifiedBy
+    private String modifiedBy;
 
     /// 数据上次修改时间
     @Comment("数据上次修改时间")
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime updateTime;
+    private LocalDateTime modifiedAt;
 
     /// 数据删除时间，不为 null 表示未删除
     @Comment("数据删除时间，不为 null 表示未删除")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime deletedTime;
+    private LocalDateTime deletedAt;
 
     public String getRemark() { return remark; }
 
     public void setRemark(String remark) { this.remark = remark; }
 
-    public LocalDateTime getCreatedTime() { return createdTime; }
+    public String getCreatedBy() { return createdBy; }
 
-    public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 
-    public LocalDateTime getUpdateTime() { return updateTime; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public void setUpdateTime(LocalDateTime updateTime) { this.updateTime = updateTime; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getDeletedTime() { return deletedTime; }
+    public String getModifiedBy() { return modifiedBy; }
 
-    public void setDeletedTime(LocalDateTime deletedTime) { this.deletedTime = deletedTime; }
+    public void setModifiedBy(String modifiedBy) { this.modifiedBy = modifiedBy; }
+
+    public LocalDateTime getModifiedAt() { return modifiedAt; }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) { this.modifiedAt = modifiedAt; }
+
+    public LocalDateTime getDeletedAt() { return deletedAt; }
+
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
 
     private static final ObjectMapper debugObjectMapper = new ObjectMapper()
 
