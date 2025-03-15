@@ -24,7 +24,7 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfiguration
 {
-    @Resource private ObjectMapper mapper;
+    @Resource private ObjectMapper objectMapper;
 
     /// 配置密码编码器
     @Bean
@@ -39,8 +39,6 @@ public class SecurityConfiguration
                 .build();
     }
 
-    private static final String[] allowList = {"/**"};
-
     /// 配置 Spring Security 过滤器链
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception
@@ -48,8 +46,9 @@ public class SecurityConfiguration
         return security
                 .authenticationManager(authenticationManager(security))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(allowList).permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/**").permitAll() // TODO 测试用，生产环境须修改
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,25 +57,26 @@ public class SecurityConfiguration
                 .exceptionHandling(conf -> conf
                         .authenticationEntryPoint(
                                 (req, rsp, e) ->
-                                        handle(rsp, e, HttpStatus.UNAUTHORIZED, "认证失败", e.getMessage())
+                                        handle(rsp, HttpStatus.UNAUTHORIZED, "认证失败", e.getMessage())
                         )
                         .accessDeniedHandler(
                                 (req, rsp, e) ->
                                         handle(
-                                                rsp, e, HttpStatus.FORBIDDEN, "拒绝访问",
+                                                rsp, HttpStatus.FORBIDDEN, "拒绝访问",
                                                 "抱歉，您没有足够的访问权限"
                                         )
-                        ))
+                        )
+                )
                 .build();
     }
 
-    private void handle(HttpServletResponse rsp, Exception e, HttpStatus status, String title, String detail)
+    private void handle(HttpServletResponse rsp, HttpStatus status, String title, String detail)
             throws IOException
     {
         rsp.setStatus(status.value());
         rsp.setContentType("application/problem+json");
         var problemDetail = ProblemDetail.forStatusAndDetail(status, detail);
         problemDetail.setTitle(title);
-        mapper.writeValue(rsp.getOutputStream(), problemDetail);
+        objectMapper.writeValue(rsp.getOutputStream(), problemDetail);
     }
 }

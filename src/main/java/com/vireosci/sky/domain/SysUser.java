@@ -23,7 +23,6 @@ import java.security.Principal;
                 @UniqueConstraint(name = "uk_phone", columnNames = { "phone", "deleted_at" }),
                 @UniqueConstraint(name = "uk_email", columnNames = { "email", "deleted_at" }),
                 @UniqueConstraint(name = "uk_wechat", columnNames = { "wechat_union_id", "deleted_at" })
-
         }
 )
 @SQLRestriction("deleted_at IS NULL")
@@ -51,7 +50,7 @@ public class SysUser extends BaseEntity implements Principal, CredentialsContain
 
     /// 密码（使用加密后的密文）
     @Comment("密码（使用加密后的密文）")
-    @Column(nullable = false, columnDefinition = "TEXT  ")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String password;
 
     /// 昵称
@@ -117,7 +116,7 @@ public class SysUser extends BaseEntity implements Principal, CredentialsContain
     }
 
     /// 将密码加密后设置 [#password] 值
-    public void encodePassword(String password, PasswordEncoder encoder) { this.password = encoder.encode(password); }
+    public void setEncodePassword(String password, PasswordEncoder encoder) { this.password = encoder.encode(password); }
 
     public String getId() { return id; }
 

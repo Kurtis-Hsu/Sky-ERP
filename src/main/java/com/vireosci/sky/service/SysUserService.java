@@ -1,5 +1,6 @@
 package com.vireosci.sky.service;
 
+import com.vireosci.sky.common.util.AopContextSupport;
 import com.vireosci.sky.domain.SysUser;
 import com.vireosci.sky.repository.SysUserRepository;
 import jakarta.annotation.Resource;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 /// 用户服务
 @Service
-public class SysUserService
+public class SysUserService implements AopContextSupport<SysUserService>
 {
     private static final Logger log = LoggerFactory.getLogger(SysUserService.class);
 
@@ -25,9 +26,9 @@ public class SysUserService
     {
         var user = new SysUser();
         user.setPrincipal(principal);
-        user.encodePassword(credentials, passwordEncoder);
+        user.setEncodePassword(credentials, passwordEncoder);
 
         log.debug("注册用户: {}", user);
-        sysUserRepository.save(user);
+        sysUserRepository.saveAndFlush(user);
     }
 }

@@ -1,12 +1,12 @@
 package com.vireosci.sky.common.configure;
 
-import com.vireosci.sky.App;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -21,6 +21,7 @@ import java.util.Optional;
 @EnableJpaAuditing(
         modifyOnCreate = false, dateTimeProviderRef = "auditingDateTimeProvider", auditorAwareRef = "auditorAware"
 )
+@EnableJpaRepositories("com.vireosci.sky.repository")
 public class DatabaseConfiguration
 {
     /// 配置 `Redis` 模板
@@ -47,9 +48,7 @@ public class DatabaseConfiguration
                         SecurityContextHolder
                                 .getContext()
                                 .getAuthentication()
-                                .getPrincipal()
-                                .toString()
                 )
-                .or(() -> Optional.of(App.DEFAULT_OPERATOR));
+                .map(auth -> auth.getPrincipal().toString());
     }
 }

@@ -29,7 +29,7 @@ public abstract class BaseEntity implements Serializable
     /// 数据创建人
     @Comment("数据创建人")
     @CreatedBy
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false, columnDefinition = "CHAR(36)")
     private String createdBy;
 
     /// 数据创建时间
@@ -42,6 +42,7 @@ public abstract class BaseEntity implements Serializable
     /// 数据上次修改人
     @Comment("数据上次修改人")
     @LastModifiedBy
+    @Column(columnDefinition = "CHAR(36)")
     private String modifiedBy;
 
     /// 数据上次修改时间
@@ -54,6 +55,9 @@ public abstract class BaseEntity implements Serializable
     @Comment("数据删除时间，不为 null 表示未删除")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime deletedAt;
+
+    /// 若 [#deletedAt] 为 `null` 表示该数据未被删除，否则表示已删除
+    public boolean isDeleted() { return deletedAt != null; }
 
     public String getRemark() { return remark; }
 
