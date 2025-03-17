@@ -3,20 +3,21 @@ import org.gradle.kotlin.dsl.filter
 
 plugins {
     java
+    kotlin("jvm") version "2.1.10"
     id("org.springframework.boot") version "3.4.3"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-val runningEnvironment = properties["com.vireosci.running-environment"] ?: "development"
+val runtimeEnvironment = properties["com.vireosci.sky.runtime-environment"]
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     sourceSets.main {
         resources.include(
             "META-INF/**",
-            "config/application.yml", "config/application-$runningEnvironment.yml",
+            "config/application.yml", "config/application-$runtimeEnvironment.yml",
+            "messages.properties", "messages_*.properties",
             "banner.txt",
-            "public/index.html"
         )
     }
 }
@@ -41,6 +42,9 @@ dependencies {
     // Jasypt encryption/decryption tool
     implementation("com.github.ulisesbocchio", "jasypt-spring-boot-starter", "3.0.5")
 
+    // Jose4j
+    implementation("org.bitbucket.b_c", "jose4j", "0.9.3")
+
     // JUnit Test
     testRuntimeOnly("org.junit.platform", "junit-platform-launcher")
 }
@@ -51,7 +55,7 @@ tasks.processResources {
     filesMatching("config/**/*.yml") {
         filter<ReplaceTokens>(
             "tokens" to mapOf(
-                "running-environment" to runningEnvironment,
+                "running-environment" to runtimeEnvironment,
                 "project-name" to project.name,
                 "project-version" to version
             )

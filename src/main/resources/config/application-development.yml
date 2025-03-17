@@ -16,5 +16,4 @@ spring:
 
 logging:
   level:
-    com.vireosci.sky:
-      service: debug
+    com.vireosci.sky: debug

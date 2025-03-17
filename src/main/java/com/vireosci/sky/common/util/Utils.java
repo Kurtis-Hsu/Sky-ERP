@@ -26,4 +26,13 @@ public final class Utils
     {
         return origin == null ? defaultValue.get() : origin;
     }
+
+    /// 断言 `condition` 为真，否则抛出异常 [AssertException]
+    public static void asserts(boolean condition) { if (!condition) throw new AssertException(); }
+
+    /// 断言 `condition` 为真，否则抛出异常 [AssertException]
+    public static void asserts(boolean condition, String message, Object... args)
+    {
+        if (!condition) throw new AssertException(message, args);
+    }
 }

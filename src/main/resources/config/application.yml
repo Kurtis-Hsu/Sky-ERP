@@ -38,10 +38,14 @@ logging:
 
 jasypt:
   encryptor:
-    gcm-secret-key-password: ${SKY_SECURITY_KEY}
+    gcm-secret-key-password: ${sky.security.key}
     algorithm: PBEWithMD5AndDES
     key-obtention-iterations: 1000
-    pool-size: 1
+    pool-size: 4
     provider-name: SunJCE
     salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
     string-output-type: base64
+
+sky:
+  security:
+    key: ${SKY_SECURITY_KEY}

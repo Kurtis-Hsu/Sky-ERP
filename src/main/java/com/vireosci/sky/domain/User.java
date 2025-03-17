@@ -6,6 +6,7 @@ import com.vireosci.sky.common.util.RegexMatchSupport;
 import com.vireosci.sky.common.util.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
@@ -14,11 +15,12 @@ import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.Principal;
+import java.util.Set;
 
 /// 用户
 @Entity
 @Table(
-        name = "sys_user",
+        name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_phone", columnNames = { "phone", "deleted_at" }),
                 @UniqueConstraint(name = "uk_email", columnNames = { "email", "deleted_at" }),
@@ -26,8 +28,8 @@ import java.security.Principal;
         }
 )
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE sys_user SET deleted_at = now() WHERE id = ?;")
-public class SysUser extends BaseEntity implements Principal, CredentialsContainer
+@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?;")
+public class User extends BaseEntity implements Principal, CredentialsContainer
 {
     /// 数据ID
     @Comment("数据ID")
@@ -78,14 +80,24 @@ public class SysUser extends BaseEntity implements Principal, CredentialsContain
 
     /// 头像
     @Comment("头像")
-    @Lob
     @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "BYTEA")
     private byte[] avatar;
 
     /// 微信 UnionId
     @Comment("微信 UnionId")
     @Column(columnDefinition = "CHAR(28)")
+    @Null
     private String wechatUnionId;
+
+    /// 用户角色集合
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
     /// 返回用户的昵称 [#nickname]
     @Override public String getName() { return nickname; }
@@ -93,7 +105,7 @@ public class SysUser extends BaseEntity implements Principal, CredentialsContain
     /// 擦除敏感信息
     @Override public void eraseCredentials() { password = null; }
 
-    @AssertTrue(message = "手机号和邮箱至少存储一个")
+    @AssertTrue(message = "{sky.domain.user.has-valid-principal}")
     public boolean hasValidPrincipal() { return StringUtils.notBlank(phone) || StringUtils.notBlank(email); }
 
     /// 根据 `principal` 匹配结果设置用户信息：
@@ -116,7 +128,10 @@ public class SysUser extends BaseEntity implements Principal, CredentialsContain
     }
 
     /// 将密码加密后设置 [#password] 值
-    public void setEncodePassword(String password, PasswordEncoder encoder) { this.password = encoder.encode(password); }
+    public void setEncodePassword(String password, PasswordEncoder encoder)
+    {
+        this.password = encoder.encode(password);
+    }
 
     public String getId() { return id; }
 
