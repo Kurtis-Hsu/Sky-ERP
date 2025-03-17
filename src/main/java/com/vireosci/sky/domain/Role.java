@@ -9,13 +9,15 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
 
+/// 角色
 @Entity
+@Comment("角色表")
 @Table(
         name = "roles",
         uniqueConstraints = @UniqueConstraint(name = "uk_name", columnNames = { "name", "deleted_at" })
 )
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE roles SET deleted_at = now() WHERE id = ?;")
+@SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class Role extends BaseEntity implements GrantedAuthority
 {
     public static final String PREFIX = "ROLE_";
@@ -43,7 +45,7 @@ public class Role extends BaseEntity implements GrantedAuthority
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Role> permissions;
+    private Set<Permission> permissions;
 
     @Override public String getAuthority() { return PREFIX + name; }
 
@@ -59,7 +61,7 @@ public class Role extends BaseEntity implements GrantedAuthority
 
     public void setDescription(String description) { this.description = description; }
 
-    public Set<Role> getPermissions() { return permissions; }
+    public Set<Permission> getPermissions() { return permissions; }
 
-    public void setPermissions(Set<Role> permissions) { this.permissions = permissions; }
+    public void setPermissions(Set<Permission> permissions) { this.permissions = permissions; }
 }

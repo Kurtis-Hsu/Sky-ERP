@@ -1,7 +1,6 @@
 package com.vireosci.sky.common.configure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,13 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfiguration
 {
-    @Resource private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    public SecurityConfiguration(ObjectMapper objectMapper)
+    {
+        super();
+        this.objectMapper = objectMapper;
+    }
 
     /// 配置密码编码器
     @Bean

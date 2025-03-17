@@ -3,6 +3,7 @@ package com.vireosci.sky;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/// 天际 ERP 系统应用
 @SpringBootApplication
 public class App
 {

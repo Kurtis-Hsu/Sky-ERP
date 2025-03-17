@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 
 @SpringBootTest
 class AppTests
@@ -14,11 +15,15 @@ class AppTests
     @Resource private UserRepository userRepository;
 
     @Test
+    @Commit
     @Transactional
     void test()
     {
-        userService.register("13344445555", "testPWD123");
+        var user = userService.register("13344445555", "testPWD123");
         userService.register("233QWQ@test.com", "testPWD123");
         userRepository.flush();
+
+        // System.out.println(userRepository.findNicknameById(user.getId()));
+        userRepository.delete(user);
     }
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 
 /// 用户
 @Entity
+@Comment("用户表")
 @Table(
         name = "users",
         uniqueConstraints = {
@@ -28,7 +29,7 @@ import java.util.Set;
         }
 )
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?;")
+@SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class User extends BaseEntity implements Principal, CredentialsContainer
 {
     /// 数据ID
@@ -172,4 +173,8 @@ public class User extends BaseEntity implements Principal, CredentialsContainer
     public String getWechatUnionId() { return wechatUnionId; }
 
     public void setWechatUnionId(String wechatUnionId) { this.wechatUnionId = wechatUnionId; }
+
+    public Set<Role> getRoles() { return roles; }
+
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }

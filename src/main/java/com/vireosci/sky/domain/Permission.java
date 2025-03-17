@@ -7,13 +7,15 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 
+/// 权限
 @Entity
+@Comment("权限表")
 @Table(
         name = "permissions",
         uniqueConstraints = @UniqueConstraint(name = "uk_name", columnNames = { "name", "deleted_at" })
 )
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE permissions SET deleted_at = now() WHERE id = ?;")
+@SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class Permission extends BaseEntity implements GrantedAuthority
 {
     public static final String PREFIX = "PERMISSION:";

@@ -18,8 +18,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String JWT_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization", JWT_PREFIX = "Bearer ";
 
     private final UserService userService;
 
@@ -39,6 +38,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         }
 
         var jwt = jwtHeader.substring(JWT_PREFIX.length());
-        log.debug("JWT: {}", jwt);
     }
 }

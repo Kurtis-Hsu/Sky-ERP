@@ -19,7 +19,8 @@ import java.util.Optional;
 /// 数据库相关配置
 @Configuration
 @EnableJpaAuditing(
-        modifyOnCreate = false, dateTimeProviderRef = "auditingDateTimeProvider", auditorAwareRef = "auditorAware"
+        modifyOnCreate = false,
+        dateTimeProviderRef = "auditingDateTimeProvider", auditorAwareRef = "auditorAware"
 )
 @EnableJpaRepositories("com.vireosci.sky.repository")
 public class DatabaseConfiguration
