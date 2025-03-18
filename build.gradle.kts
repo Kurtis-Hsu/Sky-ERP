@@ -13,12 +13,11 @@ val runtimeEnvironment = properties["com.vireosci.sky.runtime-environment"]
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     sourceSets.main {
-        resources.include(
-            "META-INF/**",
-            "config/application.yml", "config/application-$runtimeEnvironment.yml",
-            "messages.properties", "messages_*.properties",
-            "banner.txt",
-        )
+        // 排除非指定环境的 application.yml 配置文件
+        resources.exclude {
+            val name = it.file.name
+            name.startsWith("application-") && name.endsWith(".yml") && name != "application-$runtimeEnvironment.yml"
+        }
     }
 }
 
