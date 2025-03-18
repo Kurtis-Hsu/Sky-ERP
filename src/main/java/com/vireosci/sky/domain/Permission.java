@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
         name = "permissions",
         uniqueConstraints = @UniqueConstraint(name = "uk_name", columnNames = { "name", "deleted_at" })
 )
+@SuppressWarnings("unused")
 @SQLRestriction("deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class Permission extends BaseEntity implements GrantedAuthority

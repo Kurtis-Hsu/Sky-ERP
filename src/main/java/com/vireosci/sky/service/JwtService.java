@@ -3,12 +3,11 @@ package com.vireosci.sky.service;
 import com.vireosci.sky.common.exception.JwtExpiredException;
 import com.vireosci.sky.domain.User;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -19,8 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.HashSet;
+
+import static com.vireosci.sky.App.RUNTIME_KEY_PAIR;
 
 /// JWT 服务
 @Service
@@ -41,7 +41,8 @@ public class JwtService
     {
         this.messageService = messageService;
 
-        loginJwk = RsaJwkGenerator.generateJwk(2048);
+        loginJwk = (RsaJsonWebKey) PublicJsonWebKey.Factory.newPublicJwk(RUNTIME_KEY_PAIR.getPublic());
+        loginJwk.setPrivateKey(RUNTIME_KEY_PAIR.getPrivate());
         loginJwk.setKeyId(JWT_FLAG_LOGIN);
 
         loginJwtConsumer = new JwtConsumerBuilder()
@@ -60,25 +61,22 @@ public class JwtService
     /// 生成登录用的 JWT
     public String generateLoginJwt(User user) throws JoseException
     {
-        log.debug("即将为用户 {} 生成登录认证 JWT", user.getNickname());
-        var now = NumericDate.now();
-        // 设置令牌有效期为30天
-        var expirationTime = NumericDate.fromMilliseconds(now.getValue() + Duration.ofDays(30).toMillis());
+        log.debug("即将为用户 {}(id: {}) 生成登录认证 JWT", user.getNickname(), user.getId());
 
         var claims = new JwtClaims();
         claims.setSubject(JWT_FLAG_LOGIN); // JWT 主题
         claims.setIssuer(applicationName); // 发布人，这里使用项目名称
-        claims.setAudience(user.getNickname()); // 用户名，这里使用昵称
-        claims.setIssuedAt(now); // 令牌生成时间
-        claims.setExpirationTime(expirationTime); // 令牌过期时间
+        claims.setIssuedAtToNow(); // 令牌生成时间
+        claims.setExpirationTimeMinutesInTheFuture(30 * 60 * 24); // 令牌有效时间，这里设置为30天
+        claims.setJwtId(user.getId()); // 用户 ID 即是 JWT ID
 
+        claims.setClaim("nickname", user.getNickname());
         var userAuthorities = new HashSet<String>();
         user.getRoles().forEach(role -> {
             userAuthorities.add(role.getAuthority());
             role.getPermissions().forEach(permission -> userAuthorities.add(permission.getAuthority()));
         });
         claims.setStringListClaim("authorities", userAuthorities.stream().toList());
-        claims.setJwtId(user.getId()); // 用户 ID 即是 JWT ID
 
         var jws = new JsonWebSignature();
         jws.setKey(loginJwk.getPrivateKey());
@@ -86,13 +84,15 @@ public class JwtService
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         jws.setPayload(claims.toJson());
 
-        log.debug("生成登录认证 JWT：{}", jws.getCompactSerialization());
-        return jws.getCompactSerialization();
+        var jwt = jws.getCompactSerialization();
+        log.debug("生成登录认证 JWT：\n{}", jwt);
+        return jwt;
     }
 
+    /// 解析登录认证 JWT
     public JwtClaims parseLoginJwt(String jwt)
     {
-        log.debug("解析登录认证 JWT：{}", jwt);
+        log.debug("解析登录认证 JWT：\n{}", jwt);
         JwtClaims claims;
         try
         {
@@ -103,7 +103,7 @@ public class JwtService
         catch (InvalidJwtException e)
         {
             if (log.isDebugEnabled())
-                log.debug("登录认证 JWT 解析失败：{}\n{}", e.getMessage(), e.getJwtContext().getJwtClaims().toJson());
+                log.debug("登录认证 JWT 解析失败：\n{}", e.getMessage());
 
             if (e.hasExpired())
             {

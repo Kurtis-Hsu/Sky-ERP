@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /// 角色
@@ -16,6 +17,7 @@ import java.util.Set;
         name = "roles",
         uniqueConstraints = @UniqueConstraint(name = "uk_name", columnNames = { "name", "deleted_at" })
 )
+@SuppressWarnings("unused")
 @SQLRestriction("deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class Role extends BaseEntity implements GrantedAuthority
@@ -45,7 +47,7 @@ public class Role extends BaseEntity implements GrantedAuthority
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
 
     @Override public String getAuthority() { return PREFIX + name; }
 

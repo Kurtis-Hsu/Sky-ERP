@@ -6,7 +6,6 @@ import com.vireosci.sky.common.util.RegexMatchSupport;
 import com.vireosci.sky.common.util.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
@@ -15,6 +14,7 @@ import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Set;
 
 /// 用户
@@ -28,6 +28,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_wechat", columnNames = { "wechat_union_id", "deleted_at" })
         }
 )
+@SuppressWarnings("unused")
 @SQLRestriction("deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = now() WHERE id = ?;")
 public class User extends BaseEntity implements Principal, CredentialsContainer
@@ -88,7 +89,6 @@ public class User extends BaseEntity implements Principal, CredentialsContainer
     /// 微信 UnionId
     @Comment("微信 UnionId")
     @Column(columnDefinition = "CHAR(28)")
-    @Null
     private String wechatUnionId;
 
     /// 用户角色集合
@@ -98,7 +98,7 @@ public class User extends BaseEntity implements Principal, CredentialsContainer
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     /// 返回用户的昵称 [#nickname]
     @Override public String getName() { return nickname; }
