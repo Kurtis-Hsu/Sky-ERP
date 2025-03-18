@@ -13,7 +13,7 @@ public class App
 {
     /// 项目运行时生成的密钥对
     ///
-    /// 该密钥对会在每次重启项目时重置
+    /// **该密钥对会在每次重启项目时重置**
     public static final KeyPair RUNTIME_KEY_PAIR;
 
     static

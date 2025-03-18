@@ -1,5 +1,6 @@
 package com.vireosci.sky.common.configure;
 
+import com.vireosci.sky.common.auth.JwtAuthenticationToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.auditing.CurrentDateTimeProvider;
@@ -50,6 +51,8 @@ public class DatabaseConfiguration
                                 .getContext()
                                 .getAuthentication()
                 )
-                .map(auth -> auth.getPrincipal().toString());
+                .map(auth -> auth instanceof JwtAuthenticationToken jwtAuth ?
+                             jwtAuth.getPrincipal().getId() : null
+                );
     }
 }

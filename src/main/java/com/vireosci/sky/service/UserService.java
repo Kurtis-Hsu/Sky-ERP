@@ -1,6 +1,5 @@
 package com.vireosci.sky.service;
 
-import com.vireosci.sky.common.util.AopContextSupport;
 import com.vireosci.sky.domain.User;
 import com.vireosci.sky.repository.UserRepository;
 import org.slf4j.Logger;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /// 用户服务
 @Service
-public class UserService implements AopContextSupport<UserService>
+public class UserService
 {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 

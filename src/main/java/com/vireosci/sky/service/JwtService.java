@@ -44,6 +44,7 @@ public class JwtService
         loginJwk = (RsaJsonWebKey) PublicJsonWebKey.Factory.newPublicJwk(RUNTIME_KEY_PAIR.getPublic());
         loginJwk.setPrivateKey(RUNTIME_KEY_PAIR.getPrivate());
         loginJwk.setKeyId(JWT_FLAG_LOGIN);
+        loginJwk.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
 
         loginJwtConsumer = new JwtConsumerBuilder()
                 .setRequireExpirationTime() // 必须有一个过期时间

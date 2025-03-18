@@ -1,6 +1,10 @@
 package com.vireosci.sky.common.configure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vireosci.sky.common.auth.JwtAuthenticationFilter;
+import com.vireosci.sky.repository.UserRepository;
+import com.vireosci.sky.service.JwtService;
+import com.vireosci.sky.service.MessageService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 
@@ -46,7 +51,11 @@ public class SecurityConfiguration
 
     /// 配置 Spring Security 过滤器链
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity security, MessageService messageService, UserRepository userRepository, JwtService jwtService,
+            ObjectMapper objectMapper
+    )
+            throws Exception
     {
         return security
                 .authenticationManager(authenticationManager(security))
@@ -59,10 +68,18 @@ public class SecurityConfiguration
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(userRepository, jwtService, objectMapper, messageService),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .exceptionHandling(conf -> conf
                         .authenticationEntryPoint(
                                 (req, rsp, e) ->
-                                        handle(rsp, HttpStatus.UNAUTHORIZED, "认证失败", e.getMessage())
+                                        handle(
+                                                rsp, HttpStatus.UNAUTHORIZED,
+                                                messageService.getMessage("sky.login.failed.title"),
+                                                messageService.getMessage("sky.login.failed")
+                                        )
                         )
                         .accessDeniedHandler(
                                 (req, rsp, e) ->
