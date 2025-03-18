@@ -16,7 +16,7 @@ java {
         // 排除非指定环境的 application.yml 配置文件
         resources.exclude {
             val name = it.file.name
-            name.startsWith("application-") && name.endsWith(".yml") && name != "application-$runtimeEnvironment.yml"
+            name.matches("application-.+\\.yml".toRegex()) && name != "application-$runtimeEnvironment.yml"
         }
     }
 }
